@@ -43,15 +43,16 @@ export default class Application {
     private connectDatabase(): Promise<typeof mongoose> {        
         const url = this.getDatabaseUrlConnection();
         return mongoose.connect(url, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         })
     }
 
     private getDatabaseUrlConnection(): string {
         if(env.database.host === 'localhost') {
-            return `mongodb://${env.database.host}/${env.database.namespace}`;
+            return `mongodb://${env.database.user}:${env.database.pwd}@${env.database.host}${env.database.port ? `:${env.database.port}` : ''}/${env.database.namespace}?authSource=admin`;
         } else {
-            return `mongodb+srv://${env.database.user}:${env.database.pwd}@${env.database.host}/${env.database.namespace}?retryWrites=true&w=majority`;
+            return `mongodb+srv://${env.database.user}:${env.database.pwd}@${env.database.host}${env.database.port ? `:${env.database.port}` : ''}/${env.database.namespace}?retryWrites=true&w=majority`;
         }
     }
 
